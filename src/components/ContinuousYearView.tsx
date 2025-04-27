@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { format, startOfYear, eachMonthOfInterval, eachDayOfInterval, startOfMonth, endOfMonth, isSameMonth, isSameDay } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -44,7 +43,6 @@ const ContinuousYearView = ({
   });
   const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-  // Generate all days for the entire year in a single array
   const allDays = months.reduce((acc, month) => {
     const monthStart = startOfMonth(month);
     const monthEnd = endOfMonth(month);
@@ -55,7 +53,6 @@ const ContinuousYearView = ({
     return [...acc, ...days];
   }, [] as Date[]);
 
-  // Calculate which days belong to which month for month highlighting
   const monthBoundaries = months.map(month => ({
     month,
     firstDayIndex: allDays.findIndex(day => isSameMonth(day, month))
@@ -63,7 +60,6 @@ const ContinuousYearView = ({
 
   return (
     <div className="w-full overflow-auto glass-morphism">
-      {/* Header with weekday labels */}
       <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b border-border/50 py-2">
         <div className="grid grid-cols-7 gap-px">
           {weekDays.map(day => (
@@ -74,9 +70,7 @@ const ContinuousYearView = ({
         </div>
       </div>
 
-      {/* Continuous calendar grid */}
       <div className="relative grid grid-cols-7 gap-px">
-        {/* Month highlight backgrounds */}
         {monthBoundaries.map(({ month, firstDayIndex }, index) => {
           const nextMonthStart = monthBoundaries[index + 1]?.firstDayIndex || allDays.length;
           const daysInMonth = nextMonthStart - firstDayIndex;
@@ -92,15 +86,10 @@ const ContinuousYearView = ({
                 gridRow: `${Math.floor(firstDayIndex / 7) + 1} / span ${Math.ceil(daysInMonth / 7)}`,
                 gridColumn: "1 / span 7",
               }}
-            >
-              <div className="text-center py-2 font-medium text-primary/80">
-                {format(month, 'MMMM')}
-              </div>
-            </div>
+            />
           );
         })}
 
-        {/* Days grid */}
         {allDays.map((day, index) => {
           const dayEvents = events.filter(event => 
             isSameMonth(event.date, day) && isSameDay(event.date, day)
@@ -118,7 +107,6 @@ const ContinuousYearView = ({
                 {format(day, 'd')}
               </span>
 
-              {/* Event indicators */}
               <div className="absolute bottom-1 left-1 right-1">
                 {dayEvents.slice(0, 2).map((event, i) => (
                   <div
@@ -143,4 +131,3 @@ const ContinuousYearView = ({
 };
 
 export default ContinuousYearView;
-
