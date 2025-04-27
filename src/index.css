@@ -7,39 +7,39 @@
 
 @layer base {
   :root {
-    --background: 45 40% 98%;
-    --foreground: 20 14.3% 15.1%;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 20 14.3% 15.1%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 20 14.3% 15.1%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
 
     --primary: 30 95% 51%;
     --primary-foreground: 60 9.1% 97.8%;
 
-    --secondary: 105 50% 35%;
-    --secondary-foreground: 60 9.1% 97.8%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 60 4.8% 95.9%;
-    --muted-foreground: 25 5.3% 44.7%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
 
     --accent: 12 83.2% 57.1%;
     --accent-foreground: 60 9.1% 97.8%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 60 9.1% 97.8%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 20 5.9% 90%;
-    --input: 20 5.9% 90%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
     --ring: 30 95% 51%;
 
     --radius: 0.75rem;
   }
 
   * {
-    @apply border-border;
+    @apply border-border selection:bg-white/10 selection:text-white;
   }
 
   body {
@@ -55,5 +55,9 @@
 @layer components {
   .container-custom {
     @apply container mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .glass-morphism {
+    @apply backdrop-blur-xl bg-white/5 border border-white/10 shadow-[0_4px_12px_-2px_rgba(0,0,0,0.3)];
   }
 }
