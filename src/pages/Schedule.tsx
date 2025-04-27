@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay } from 'date-fns';
 import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, List, Tag } from 'lucide-react';
@@ -8,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import EventList, { eventCategoryColors, EventCategory } from '@/components/EventList';
 import EventForm from '@/components/EventForm';
+import ContinuousYearView from '@/components/ContinuousYearView';
 
 // Mock data for events
 const initialEvents = [
@@ -175,58 +175,13 @@ const Schedule = () => {
       
       <div className="flex gap-6">
         <div className={cn("flex-grow", showSidebar ? "w-3/4" : "w-full")}>
-          {viewMode === 'year' && (
-            <div className="grid grid-cols-3 md:grid-cols-4 gap-4">
-              {monthsInYear.map((month) => (
-                <Card 
-                  key={month.toString()} 
-                  className="glass-morphism p-4 cursor-pointer hover:ring-1 hover:ring-primary"
-                  onClick={() => {
-                    setCurrentDate(month);
-                    toggleViewMode('month');
-                  }}
-                >
-                  <h3 className="text-center font-medium mb-2">{format(month, 'MMMM')}</h3>
-                  <div className="h-24 relative">
-                    {events
-                      .filter(event => 
-                        event.date.getMonth() === month.getMonth() && 
-                        event.date.getFullYear() === month.getFullYear()
-                      )
-                      .slice(0, 3)
-                      .map((event, index) => (
-                        <div 
-                          key={event.id}
-                          className={cn(
-                            "absolute h-1 rounded-sm",
-                            getCategoryColor(event.category)
-                          )}
-                          style={{
-                            left: '10%',
-                            width: '80%',
-                            top: `${(index * 25) + 10}%`
-                          }}
-                        />
-                      ))
-                    }
-                    {events.filter(event => 
-                      event.date.getMonth() === month.getMonth() && 
-                      event.date.getFullYear() === month.getFullYear()
-                    ).length > 3 && (
-                      <div className="absolute bottom-0 right-0 text-xs text-muted-foreground">
-                        +{events.filter(event => 
-                          event.date.getMonth() === month.getMonth() && 
-                          event.date.getFullYear() === month.getFullYear()
-                        ).length - 3} more
-                      </div>
-                    )}
-                  </div>
-                </Card>
-              ))}
-            </div>
-          )}
-          
-          {viewMode === 'month' && (
+          {viewMode === 'year' ? (
+            <ContinuousYearView
+              currentDate={currentDate}
+              events={events}
+              onEventClick={handleEventClick}
+            />
+          ) : viewMode === 'month' && (
             <div className="glass-morphism p-6">
               <div className="grid grid-cols-7 gap-1 mb-2">
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
