@@ -1,22 +1,17 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { categories, recipes, getFavoriteRecipes } from '@/lib/data';
 import RecipeCard from '@/components/RecipeCard';
 import CategoryPill from '@/components/CategoryPill';
-
 const Index = () => {
   const featuredRecipes = recipes.slice(0, 3);
   const favoriteRecipes = getFavoriteRecipes().slice(0, 4);
-
-  return (
-    <div className="min-h-screen bg-muted/30">
+  return <div className="min-h-screen bg-muted/30">
       {/* Hero section */}
-      <section 
-        className="relative bg-cover bg-center h-80 md:h-96" 
-        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=1200)' }}
-      >
+      <section className="relative bg-cover bg-center h-80 md:h-96" style={{
+      backgroundImage: 'url(https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=1200)'
+    }}>
         <div className="absolute inset-0 bg-black/50" />
         <div className="container-custom h-full flex items-center relative z-10">
           <div className="max-w-lg">
@@ -48,21 +43,17 @@ const Index = () => {
             </Button>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {categories.map((category) => (
-              <CategoryPill key={category.id} category={category} />
-            ))}
+            {categories.map(category => <CategoryPill key={category.id} category={category} />)}
           </div>
         </div>
       </section>
 
       {/* Featured recipes section */}
-      <section className="py-12 bg-white">
+      <section className="py-12 bg-zinc-950">
         <div className="container-custom">
           <h2 className="text-2xl md:text-3xl font-display font-bold mb-8">Featured Recipes</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredRecipes.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} size="lg" />
-            ))}
+            {featuredRecipes.map(recipe => <RecipeCard key={recipe.id} recipe={recipe} size="lg" />)}
           </div>
         </div>
       </section>
@@ -77,14 +68,10 @@ const Index = () => {
             </Button>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {favoriteRecipes.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} size="sm" />
-            ))}
+            {favoriteRecipes.map(recipe => <RecipeCard key={recipe.id} recipe={recipe} size="sm" />)}
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
