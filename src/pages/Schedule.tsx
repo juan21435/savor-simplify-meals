@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, List, Tag } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { format, addMonths, subMonths } from 'date-fns';
 import { Card } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import EventList, { eventCategoryColors, EventCategory } from '@/components/EventList';
 import EventForm from '@/components/EventForm';
 import ContinuousYearView from '@/components/ContinuousYearView';
+import ViewModeSelector from '@/components/schedule/ViewModeSelector';
+import MonthView from '@/components/schedule/MonthView';
+import ScheduleControls from '@/components/schedule/ScheduleControls';
 
 // Mock data for events
 const initialEvents = [
@@ -47,17 +48,6 @@ const Schedule = () => {
     return eventCategoryColors[normalizedCategory] || eventCategoryColors.other;
   };
 
-  // Generate months for the year view
-  const generateYearView = () => {
-    const months = [];
-    for (let i = 0; i < 12; i++) {
-      months.push(new Date(currentDate.getFullYear(), i, 1));
-    }
-    return months;
-  };
-
-  const monthsInYear = generateYearView();
-  
   const handlePreviousPeriod = () => {
     if (viewMode === 'year') {
       setCurrentDate(new Date(currentDate.getFullYear() - 1, 0, 1));
@@ -88,80 +78,19 @@ const Schedule = () => {
     setShowSidebar(!showSidebar);
   };
 
-  const toggleViewMode = (mode) => {
-    setViewMode(mode);
-  };
-
-  // Days for the month view
-  const daysInMonth = viewMode === 'month' ? eachDayOfInterval({
-    start: startOfMonth(currentDate),
-    end: endOfMonth(currentDate)
-  }) : [];
-
-  // Filter events for the current view
-  const filteredEvents = events.filter(event => {
-    if (viewMode === 'year') {
-      return event.date.getFullYear() === currentDate.getFullYear();
-    } else if (viewMode === 'month') {
-      return isSameMonth(event.date, currentDate);
-    }
-    return true;
-  });
-
   return (
     <div className="container-custom py-12">
       <h1 className="text-4xl font-display font-bold text-foreground mb-8">Schedule</h1>
       
-      <div className="flex gap-4 mb-8">
-        <Button onClick={handlePreviousPeriod} variant="outline" size="icon">
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <div className="flex-1 text-center">
-          {viewMode === 'year' ? (
-            <h2 className="text-2xl font-display">{currentDate.getFullYear()}</h2>
-          ) : (
-            <h2 className="text-2xl font-display">{format(currentDate, 'MMMM yyyy')}</h2>
-          )}
-        </div>
-        <Button onClick={handleNextPeriod} variant="outline" size="icon">
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
-      
-      <div className="flex gap-4 mb-6">
-        <Button 
-          variant={viewMode === 'year' ? 'default' : 'outline'} 
-          onClick={() => toggleViewMode('year')}
-          className="flex gap-2 items-center"
-        >
-          <CalendarIcon className="h-4 w-4" />
-          Year
-        </Button>
-        <Button 
-          variant={viewMode === 'month' ? 'default' : 'outline'} 
-          onClick={() => toggleViewMode('month')}
-          className="flex gap-2 items-center"
-        >
-          <CalendarIcon className="h-4 w-4" />
-          Month
-        </Button>
-        <div className="flex-1"></div>
-        <Button 
-          variant="outline" 
-          onClick={toggleSidebar}
-          className="flex gap-2 items-center"
-        >
-          <List className="h-4 w-4" />
-          {showSidebar ? 'Hide Events' : 'Show Events'}
-        </Button>
-        <Button 
-          onClick={() => setShowEventForm(true)}
-          className="flex gap-2 items-center"
-        >
-          <Plus className="h-4 w-4" />
-          Add Event
-        </Button>
-      </div>
+      <ScheduleControls
+        currentDate={currentDate}
+        viewMode={viewMode}
+        showSidebar={showSidebar}
+        onPreviousPeriod={handlePreviousPeriod}
+        onNextPeriod={handleNextPeriod}
+        onToggleSidebar={toggleSidebar}
+        onAddEvent={() => setShowEventForm(true)}
+      />
 
       <div className="glass-morphism p-3 mb-4 rounded flex flex-wrap gap-2">
         <div className="text-sm font-medium mr-2">Categories:</div>
@@ -175,68 +104,26 @@ const Schedule = () => {
       
       <div className="flex gap-6">
         <div className={cn("flex-grow", showSidebar ? "w-3/4" : "w-full")}>
+          <div className="flex gap-4 mb-4">
+            <ViewModeSelector 
+              viewMode={viewMode} 
+              onViewModeChange={setViewMode} 
+            />
+          </div>
+
           {viewMode === 'year' ? (
             <ContinuousYearView
               currentDate={currentDate}
               events={events}
               onEventClick={handleEventClick}
             />
-          ) : viewMode === 'month' && (
-            <div className="glass-morphism p-6">
-              <div className="grid grid-cols-7 gap-1 mb-2">
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                  <div key={day} className="text-center text-muted-foreground font-medium">
-                    {day}
-                  </div>
-                ))}
-              </div>
-              
-              <div className="grid grid-cols-7 gap-1">
-                {Array.from({ length: startOfMonth(currentDate).getDay() }, (_, i) => (
-                  <div key={`empty-start-${i}`} className="aspect-square p-2" />
-                ))}
-                
-                {daysInMonth.map((day) => {
-                  const dayEvents = events.filter(event => isSameDay(event.date, day));
-                  
-                  return (
-                    <div 
-                      key={day.toString()} 
-                      className={cn(
-                        "aspect-square p-2 border border-border/30 hover:bg-accent/10 rounded-md relative",
-                        isSameDay(day, new Date()) && "ring-1 ring-primary"
-                      )}
-                    >
-                      <div className="text-sm">{format(day, 'd')}</div>
-                      
-                      {dayEvents.slice(0, 3).map((event, index) => (
-                        <div 
-                          key={event.id}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEventClick(event.id);
-                          }}
-                          className={cn(
-                            "h-1 rounded-sm my-1 cursor-pointer",
-                            getCategoryColor(event.category)
-                          )}
-                        />
-                      ))}
-                      
-                      {dayEvents.length > 3 && (
-                        <div className="absolute bottom-1 right-1 text-xs text-muted-foreground">
-                          +{dayEvents.length - 3}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-                
-                {Array.from({ length: 6 - endOfMonth(currentDate).getDay() }, (_, i) => (
-                  <div key={`empty-end-${i}`} className="aspect-square p-2" />
-                ))}
-              </div>
-            </div>
+          ) : (
+            <MonthView
+              currentDate={currentDate}
+              events={events}
+              onEventClick={handleEventClick}
+              getCategoryColor={getCategoryColor}
+            />
           )}
         </div>
         
@@ -245,7 +132,7 @@ const Schedule = () => {
             <h2 className="text-xl font-medium mb-4">Upcoming Events</h2>
             <ScrollArea className="h-[500px] pr-4">
               <EventList 
-                events={filteredEvents.sort((a, b) => a.date.getTime() - b.date.getTime())} 
+                events={events.sort((a, b) => a.date.getTime() - b.date.getTime())} 
                 onEventClick={handleEventClick} 
               />
             </ScrollArea>
