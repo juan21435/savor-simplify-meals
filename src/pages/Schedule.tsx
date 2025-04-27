@@ -9,8 +9,8 @@ import ContinuousYearView from '@/components/ContinuousYearView';
 import ViewModeSelector from '@/components/schedule/ViewModeSelector';
 import MonthView from '@/components/schedule/MonthView';
 import ScheduleControls from '@/components/schedule/ScheduleControls';
+import ColorThemeEditor from '@/components/schedule/ColorThemeEditor';
 
-// Mock data for events
 const initialEvents = [
   { 
     id: '1', 
@@ -40,9 +40,9 @@ const Schedule = () => {
   const [events, setEvents] = useState(initialEvents);
   const [showSidebar, setShowSidebar] = useState(true);
   const [showEventForm, setShowEventForm] = useState(false);
-  const [viewMode, setViewMode] = useState('year'); // year, month, week, day
+  const [viewMode, setViewMode] = useState<'year' | 'month'>('year');
+  const [monthColors, setMonthColors] = useState(Array(12).fill(''));
 
-  // Helper function to get category color
   const getCategoryColor = (category: string): string => {
     const normalizedCategory = category.toLowerCase() as EventCategory;
     return eventCategoryColors[normalizedCategory] || eventCategoryColors.other;
@@ -82,15 +82,18 @@ const Schedule = () => {
     <div className="container-custom py-12">
       <h1 className="text-4xl font-display font-bold text-foreground mb-8">Schedule</h1>
       
-      <ScheduleControls
-        currentDate={currentDate}
-        viewMode={viewMode}
-        showSidebar={showSidebar}
-        onPreviousPeriod={handlePreviousPeriod}
-        onNextPeriod={handleNextPeriod}
-        onToggleSidebar={toggleSidebar}
-        onAddEvent={() => setShowEventForm(true)}
-      />
+      <div className="flex justify-between items-center">
+        <ScheduleControls
+          currentDate={currentDate}
+          viewMode={viewMode}
+          showSidebar={showSidebar}
+          onPreviousPeriod={handlePreviousPeriod}
+          onNextPeriod={handleNextPeriod}
+          onToggleSidebar={toggleSidebar}
+          onAddEvent={() => setShowEventForm(true)}
+        />
+        <ColorThemeEditor onColorsChange={(colors) => setMonthColors(colors.map(c => c.color))} />
+      </div>
 
       <div className="glass-morphism p-3 mb-4 rounded flex flex-wrap gap-2">
         <div className="text-sm font-medium mr-2">Categories:</div>
@@ -107,7 +110,7 @@ const Schedule = () => {
           <div className="flex gap-4 mb-4">
             <ViewModeSelector 
               viewMode={viewMode} 
-              onViewModeChange={setViewMode} 
+              onViewModeChange={(mode) => setViewMode(mode)} 
             />
           </div>
 
@@ -116,6 +119,7 @@ const Schedule = () => {
               currentDate={currentDate}
               events={events}
               onEventClick={handleEventClick}
+              monthColors={monthColors}
             />
           ) : (
             <MonthView

@@ -15,27 +15,29 @@ interface ContinuousYearViewProps {
   currentDate: Date;
   events: Event[];
   onEventClick: (eventId: string) => void;
+  monthColors?: string[];
 }
 
-const monthColors = {
-  0: 'from-[#F2FCE2]/10',  // January - Soft Green
-  1: 'from-[#FEF7CD]/10',  // February - Soft Yellow
-  2: 'from-[#FEC6A1]/10',  // March - Soft Orange
-  3: 'from-[#E5DEFF]/10',  // April - Soft Purple
-  4: 'from-[#FFDEE2]/10',  // May - Soft Pink
-  5: 'from-[#FDE1D3]/10',  // June - Soft Peach
-  6: 'from-[#D3E4FD]/10',  // July - Soft Blue
-  7: 'from-[#F2FCE2]/10',  // August - Soft Green
-  8: 'from-[#FEF7CD]/10',  // September - Soft Yellow
-  9: 'from-[#FEC6A1]/10',  // October - Soft Orange
-  10: 'from-[#E5DEFF]/10', // November - Soft Purple
-  11: 'from-[#FFDEE2]/10'  // December - Soft Pink
+const defaultMonthColors = {
+  0: '#F2FCE2',  // January
+  1: '#FEF7CD',  // February
+  2: '#FEC6A1',  // March
+  3: '#E5DEFF',  // April
+  4: '#FFDEE2',  // May
+  5: '#FDE1D3',  // June
+  6: '#D3E4FD',  // July
+  7: '#F2FCE2',  // August
+  8: '#FEF7CD',  // September
+  9: '#FEC6A1',  // October
+  10: '#E5DEFF', // November
+  11: '#FFDEE2'  // December
 };
 
 const ContinuousYearView = ({
   currentDate,
   events,
-  onEventClick
+  onEventClick,
+  monthColors = []
 }: ContinuousYearViewProps) => {
   const year = currentDate.getFullYear();
   const months = eachMonthOfInterval({
@@ -75,17 +77,16 @@ const ContinuousYearView = ({
         {monthBoundaries.map(({ month, firstDayIndex }, index) => {
           const nextMonthStart = monthBoundaries[index + 1]?.firstDayIndex || allDays.length;
           const daysInMonth = nextMonthStart - firstDayIndex;
+          const monthColor = monthColors[month.getMonth()] || defaultMonthColors[month.getMonth()];
           
           return (
             <div
               key={month.toString()}
-              className={cn(
-                "absolute z-0 bg-gradient-to-b to-transparent",
-                monthColors[month.getMonth()],
-              )}
+              className="absolute z-0"
               style={{
                 gridRow: `${Math.floor(firstDayIndex / 7) + 1} / span ${Math.ceil(daysInMonth / 7)}`,
                 gridColumn: "1 / span 7",
+                backgroundColor: monthColor + '1A', // Adding transparency
               }}
             />
           );
