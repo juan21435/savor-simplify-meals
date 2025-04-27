@@ -1,7 +1,22 @@
 
 import React from 'react';
 import { format } from 'date-fns';
-import { Calendar } from 'lucide-react';
+import { Calendar, Tag } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+// Define event categories with their colors
+export const eventCategoryColors = {
+  work: "bg-herb-500",
+  health: "bg-tomato-500",
+  personal: "bg-savor-500",
+  shopping: "bg-primary",
+  social: "bg-accent",
+  education: "bg-secondary",
+  other: "bg-muted"
+};
+
+// Define the type for category keys
+export type EventCategory = keyof typeof eventCategoryColors;
 
 interface Event {
   id: string;
@@ -30,6 +45,12 @@ const EventList = ({ events, onEventClick }: EventListProps) => {
   // Sort dates
   const sortedDates = Object.keys(groupedEvents).sort();
 
+  // Helper function to get category color
+  const getCategoryColor = (category: string): string => {
+    const normalizedCategory = category.toLowerCase() as EventCategory;
+    return eventCategoryColors[normalizedCategory] || eventCategoryColors.other;
+  };
+
   return (
     <div className="space-y-6">
       {sortedDates.length === 0 ? (
@@ -56,13 +77,28 @@ const EventList = ({ events, onEventClick }: EventListProps) => {
                     className="glass-morphism p-3 rounded cursor-pointer hover:ring-1 hover:ring-primary transition-all"
                   >
                     <div className="flex justify-between items-start">
-                      <h4 className="font-medium">{event.title}</h4>
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className={cn(
+                            "w-2 h-2 rounded-full", 
+                            getCategoryColor(event.category)
+                          )}
+                        />
+                        <h4 className="font-medium">{event.title}</h4>
+                      </div>
                       <span className="text-xs text-muted-foreground">
                         {format(event.date, 'h:mm a')}
                       </span>
                     </div>
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      {format(event.date, 'h:mm a')} - {format(event.endDate, 'h:mm a')}
+                    
+                    <div className="mt-1 flex items-center justify-between">
+                      <div className="text-xs text-muted-foreground">
+                        {format(event.date, 'h:mm a')} - {format(event.endDate, 'h:mm a')}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Tag className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground capitalize">{event.category}</span>
+                      </div>
                     </div>
                   </div>
                 ))}

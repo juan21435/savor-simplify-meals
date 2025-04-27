@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, List } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, List, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import EventList from '@/components/EventList';
+import EventList, { eventCategoryColors, EventCategory } from '@/components/EventList';
 import EventForm from '@/components/EventForm';
 
 // Mock data for events
@@ -40,6 +40,12 @@ const Schedule = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [showEventForm, setShowEventForm] = useState(false);
   const [viewMode, setViewMode] = useState('year'); // year, month, week, day
+
+  // Helper function to get category color
+  const getCategoryColor = (category: string): string => {
+    const normalizedCategory = category.toLowerCase() as EventCategory;
+    return eventCategoryColors[normalizedCategory] || eventCategoryColors.other;
+  };
 
   // Generate months for the year view
   const generateYearView = () => {
@@ -156,6 +162,16 @@ const Schedule = () => {
           Add Event
         </Button>
       </div>
+
+      <div className="glass-morphism p-3 mb-4 rounded flex flex-wrap gap-2">
+        <div className="text-sm font-medium mr-2">Categories:</div>
+        {Object.entries(eventCategoryColors).map(([category, colorClass]) => (
+          <div key={category} className="flex items-center gap-1">
+            <div className={cn("w-2 h-2 rounded-full", colorClass)} />
+            <span className="text-xs text-muted-foreground capitalize">{category}</span>
+          </div>
+        ))}
+      </div>
       
       <div className="flex gap-6">
         <div className={cn("flex-grow", showSidebar ? "w-3/4" : "w-full")}>
@@ -181,7 +197,10 @@ const Schedule = () => {
                       .map((event, index) => (
                         <div 
                           key={event.id}
-                          className="absolute h-1 bg-foreground rounded-sm"
+                          className={cn(
+                            "absolute h-1 rounded-sm",
+                            getCategoryColor(event.category)
+                          )}
                           style={{
                             left: '10%',
                             width: '80%',
@@ -238,8 +257,14 @@ const Schedule = () => {
                       {dayEvents.slice(0, 3).map((event, index) => (
                         <div 
                           key={event.id}
-                          onClick={() => handleEventClick(event.id)}
-                          className="h-1 bg-foreground rounded-sm my-1 cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEventClick(event.id);
+                          }}
+                          className={cn(
+                            "h-1 rounded-sm my-1 cursor-pointer",
+                            getCategoryColor(event.category)
+                          )}
                         />
                       ))}
                       
