@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Paintbrush } from 'lucide-react';
+import { Paintbrush, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/sheet';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 
 interface MonthColor {
   name: string;
@@ -39,12 +40,30 @@ interface ColorThemeEditorProps {
 
 const ColorThemeEditor = ({ onColorsChange }: ColorThemeEditorProps) => {
   const [colors, setColors] = React.useState<MonthColor[]>(defaultMonthColors);
+  const [tempColors, setTempColors] = React.useState<MonthColor[]>(defaultMonthColors);
+  const { toast } = useToast();
 
   const handleColorChange = (index: number, newColor: string) => {
-    const updatedColors = [...colors];
-    updatedColors[index] = { ...colors[index], color: newColor };
-    setColors(updatedColors);
-    onColorsChange(updatedColors);
+    const updatedColors = [...tempColors];
+    updatedColors[index] = { ...tempColors[index], color: newColor };
+    setTempColors(updatedColors);
+  };
+
+  const handleSave = () => {
+    setColors(tempColors);
+    onColorsChange(tempColors);
+    toast({
+      title: "Colors saved",
+      description: "Your color theme has been updated.",
+    });
+  };
+
+  const handleReset = () => {
+    setTempColors(colors);
+    toast({
+      title: "Changes reset",
+      description: "Your changes have been discarded.",
+    });
   };
 
   return (
@@ -62,7 +81,7 @@ const ColorThemeEditor = ({ onColorsChange }: ColorThemeEditorProps) => {
           </SheetDescription>
         </SheetHeader>
         <div className="grid gap-4 py-4">
-          {colors.map((month, index) => (
+          {tempColors.map((month, index) => (
             <div key={month.name} className="flex items-center gap-4">
               <Label htmlFor={`color-${index}`} className="w-24">
                 {month.name}
@@ -80,6 +99,15 @@ const ColorThemeEditor = ({ onColorsChange }: ColorThemeEditorProps) => {
               />
             </div>
           ))}
+        </div>
+        <div className="flex justify-between mt-6">
+          <Button variant="outline" onClick={handleReset}>
+            Reset Changes
+          </Button>
+          <Button onClick={handleSave} className="flex items-center gap-2">
+            <Save className="h-4 w-4" />
+            Save Changes
+          </Button>
         </div>
       </SheetContent>
     </Sheet>
