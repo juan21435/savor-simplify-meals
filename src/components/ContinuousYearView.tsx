@@ -55,7 +55,7 @@ const ContinuousYearView = ({
     return [...acc, ...days];
   }, [] as Date[]);
 
-  // Calculate which days belong to which month for month labels
+  // Calculate which days belong to which month for month highlighting
   const monthBoundaries = months.map(month => ({
     month,
     firstDayIndex: allDays.findIndex(day => isSameMonth(day, month))
@@ -76,7 +76,7 @@ const ContinuousYearView = ({
 
       {/* Continuous calendar grid */}
       <div className="relative grid grid-cols-7 gap-px">
-        {/* Month labels and backgrounds */}
+        {/* Month highlight backgrounds */}
         {monthBoundaries.map(({ month, firstDayIndex }, index) => {
           const nextMonthStart = monthBoundaries[index + 1]?.firstDayIndex || allDays.length;
           const daysInMonth = nextMonthStart - firstDayIndex;
@@ -94,13 +94,13 @@ const ContinuousYearView = ({
               }}
             >
               <div className="text-center py-2 font-medium text-primary/80">
-                {format(month, 'MMMM yyyy')}
+                {format(month, 'MMMM')}
               </div>
             </div>
           );
         })}
 
-        {/* Render all days continuously */}
+        {/* Days grid */}
         {allDays.map((day, index) => {
           const dayEvents = events.filter(event => 
             isSameMonth(event.date, day) && isSameDay(event.date, day)
@@ -143,3 +143,4 @@ const ContinuousYearView = ({
 };
 
 export default ContinuousYearView;
+
