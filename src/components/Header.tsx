@@ -1,14 +1,11 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Calendar, ShoppingCart, Book } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SearchBar from './SearchBar';
-
 const Header = () => {
-  return (
-    <header className="bg-white shadow-sm">
-      <div className="container-custom py-4">
+  return <header className="bg-white shadow-sm">
+      <div className="container-custom py-4 bg-slate-950">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <Link to="/" className="flex items-center gap-2 mb-4 md:mb-0">
             <span className="bg-savor-500 text-white p-1 rounded">
@@ -40,8 +37,6 @@ const Header = () => {
           </nav>
         </div>
       </div>
-    </header>
-  );
+    </header>;
 };
-
 export default Header;
