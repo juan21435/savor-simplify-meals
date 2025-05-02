@@ -6,6 +6,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { shoppingList as initialShoppingList } from '@/lib/data';
 
 const ShoppingList = () => {
@@ -149,24 +156,27 @@ const ShoppingList = () => {
                     <label htmlFor="item-category" className="block text-sm font-medium mb-1">
                       Category
                     </label>
-                    <select
-                      id="item-category"
-                      value={newItemCategory}
-                      onChange={(e) => setNewItemCategory(e.target.value)}
-                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    <Select 
+                      value={newItemCategory} 
+                      onValueChange={setNewItemCategory}
                     >
-                      <option value="Produce">Produce</option>
-                      <option value="Dairy">Dairy</option>
-                      <option value="Meat">Meat</option>
-                      <option value="Bakery">Bakery</option>
-                      <option value="Canned Goods">Canned Goods</option>
-                      <option value="Dry Goods">Dry Goods</option>
-                      <option value="Freezer">Freezer</option>
-                      <option value="Pasta & Rice">Pasta & Rice</option>
-                      <option value="Snacks">Snacks</option>
-                      <option value="Beverages">Beverages</option>
-                      <option value="Other">Other</option>
-                    </select>
+                      <SelectTrigger id="item-category" className="w-full">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Produce">Produce</SelectItem>
+                        <SelectItem value="Dairy">Dairy</SelectItem>
+                        <SelectItem value="Meat">Meat</SelectItem>
+                        <SelectItem value="Bakery">Bakery</SelectItem>
+                        <SelectItem value="Canned Goods">Canned Goods</SelectItem>
+                        <SelectItem value="Dry Goods">Dry Goods</SelectItem>
+                        <SelectItem value="Freezer">Freezer</SelectItem>
+                        <SelectItem value="Pasta & Rice">Pasta & Rice</SelectItem>
+                        <SelectItem value="Snacks">Snacks</SelectItem>
+                        <SelectItem value="Beverages">Beverages</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   
                   <Button type="submit" className="w-full bg-herb-600 hover:bg-herb-700">
