@@ -54,9 +54,9 @@ const WeekView = ({ currentDate, events, onEventClick, getCategoryColor }: WeekV
   };
   
   return (
-    <div className="glass-morphism p-4">
+    <div className="glass-morphism p-4 bg-black text-white">
       <div className="grid grid-cols-8 h-full border-b border-border/30">
-        <div className="text-center font-medium text-muted-foreground pt-6">
+        <div className="text-center font-medium text-white pt-6">
           Hour
         </div>
         {days.map((day) => (
@@ -64,7 +64,7 @@ const WeekView = ({ currentDate, events, onEventClick, getCategoryColor }: WeekV
             key={day.toString()}
             className={cn(
               "text-center py-2 font-medium border-b-2",
-              isSameDay(day, new Date()) && "border-primary text-primary"
+              isSameDay(day, new Date()) ? "border-primary text-primary" : "border-white/10 text-white"
             )}
           >
             <div>{format(day, 'EEE')}</div>
@@ -76,11 +76,11 @@ const WeekView = ({ currentDate, events, onEventClick, getCategoryColor }: WeekV
       <ScrollArea className="h-[600px]">
         <div className="relative">
           <div className="grid grid-cols-8 h-[1440px]"> {/* 24 hours * 60px = 1440px */}
-            <div className="relative border-r border-border/20">
+            <div className="relative border-r border-white/20">
               {hours.map((hour) => (
                 <div 
                   key={hour} 
-                  className="absolute font-mono text-xs text-muted-foreground w-full text-right pr-2"
+                  className="absolute font-mono text-xs text-white w-full text-right pr-2"
                   style={{ top: `${hour * 60}px` }}
                 >
                   {hour === 0 ? '12 AM' : hour < 12 ? `${hour} AM` : hour === 12 ? '12 PM' : `${hour - 12} PM`}
@@ -92,15 +92,15 @@ const WeekView = ({ currentDate, events, onEventClick, getCategoryColor }: WeekV
               <div 
                 key={day.toString()}
                 className={cn(
-                  "relative h-full border-r border-border/20",
-                  dayIndex % 2 === 0 ? "bg-gray-50/30" : "bg-white/30"
+                  "relative h-full border-r border-white/20",
+                  dayIndex % 2 === 0 ? "bg-black/80" : "bg-black/60"
                 )}
               >
                 {/* Hour lines */}
                 {hours.map((hour) => (
                   <div 
                     key={hour} 
-                    className="absolute w-full border-t border-border/10"
+                    className="absolute w-full border-t border-white/10"
                     style={{ top: `${hour * 60}px` }}
                   />
                 ))}
@@ -109,7 +109,7 @@ const WeekView = ({ currentDate, events, onEventClick, getCategoryColor }: WeekV
                 {hours.map((hour) => (
                   <div 
                     key={`half-${hour}`} 
-                    className="absolute w-full border-t border-border/5"
+                    className="absolute w-full border-t border-white/5"
                     style={{ top: `${hour * 60 + 30}px` }}
                   />
                 ))}
