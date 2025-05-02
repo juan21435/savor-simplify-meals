@@ -1,15 +1,12 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Mic, Book, ImageIcon, FileText, Link as LinkIcon } from 'lucide-react';
+import { ArrowLeft, Mic, Book } from 'lucide-react';
 import AudioJournal from '@/components/journal/AudioJournal';
 import DigitalScrapbook from '@/components/journal/DigitalScrapbook';
 
 const Journal = () => {
-  const [activeTab, setActiveTab] = useState("audio");
-  
   return (
     <div className="container-custom py-8">
       <div className="flex items-center justify-between mb-8">
@@ -23,26 +20,25 @@ const Journal = () => {
         </div>
       </div>
       
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-2 mb-8 bg-secondary">
-          <TabsTrigger value="audio" className="flex gap-2 items-center">
-            <Mic className="h-4 w-4" />
-            <span>Audio Journal</span>
-          </TabsTrigger>
-          <TabsTrigger value="scrapbook" className="flex gap-2 items-center">
-            <Book className="h-4 w-4" />
-            <span>Digital Scrapbook</span>
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="audio">
+      <div className="flex flex-col gap-12">
+        {/* Audio Journal */}
+        <div>
+          <h2 className="text-2xl font-display font-semibold flex items-center gap-2 mb-6">
+            <Mic className="h-5 w-5 text-primary" />
+            Audio Journal
+          </h2>
           <AudioJournal />
-        </TabsContent>
+        </div>
         
-        <TabsContent value="scrapbook">
+        {/* Digital Scrapbook */}
+        <div>
+          <h2 className="text-2xl font-display font-semibold flex items-center gap-2 mb-6">
+            <Book className="h-5 w-5 text-primary" />
+            Digital Scrapbook
+          </h2>
           <DigitalScrapbook />
-        </TabsContent>
-      </Tabs>
+        </div>
+      </div>
     </div>
   );
 };
