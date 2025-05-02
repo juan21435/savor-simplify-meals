@@ -9,6 +9,7 @@ import Finance from "@/pages/Finance";
 import ShoppingDashboard from "@/pages/ShoppingDashboard";
 import Journal from "@/pages/Journal";
 import Analytics from "@/pages/Analytics";
+import Health from "@/pages/Health";
 
 const queryClient = new QueryClient();
 
@@ -32,7 +33,7 @@ const App = () => (
             <Route path="/schedule" element={<Schedule />} />
             <Route path="/exercise" element={<PlaceholderPage title="Exercise" />} />
             <Route path="/finance" element={<Finance />} />
-            <Route path="/health" element={<PlaceholderPage title="Health" />} />
+            <Route path="/health" element={<Health />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/shopping" element={<ShoppingDashboard />} />
             <Route path="/journal" element={<Journal />} />
