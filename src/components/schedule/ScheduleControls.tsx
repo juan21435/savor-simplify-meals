@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 
 interface ScheduleControlsProps {
   currentDate: Date;
-  viewMode: 'year' | 'month';
+  viewMode: 'year' | 'month' | 'week' | 'day';
   showSidebar: boolean;
   onPreviousPeriod: () => void;
   onNextPeriod: () => void;
@@ -23,6 +23,21 @@ const ScheduleControls = ({
   onToggleSidebar,
   onAddEvent
 }: ScheduleControlsProps) => {
+  const getDateTitle = () => {
+    switch (viewMode) {
+      case 'year':
+        return currentDate.getFullYear().toString();
+      case 'month':
+        return format(currentDate, 'MMMM yyyy');
+      case 'week':
+        return `Week of ${format(currentDate, 'MMM d, yyyy')}`;
+      case 'day':
+        return format(currentDate, 'MMMM d, yyyy');
+      default:
+        return format(currentDate, 'MMMM yyyy');
+    }
+  };
+
   return (
     <>
       <div className="flex gap-4 mb-8">
@@ -30,11 +45,7 @@ const ScheduleControls = ({
           <ChevronLeft className="h-4 w-4" />
         </Button>
         <div className="flex-1 text-center">
-          {viewMode === 'year' ? (
-            <h2 className="text-2xl font-display">{currentDate.getFullYear()}</h2>
-          ) : (
-            <h2 className="text-2xl font-display">{format(currentDate, 'MMMM yyyy')}</h2>
-          )}
+          <h2 className="text-2xl font-display">{getDateTitle()}</h2>
         </div>
         <Button onClick={onNextPeriod} variant="outline" size="icon">
           <ChevronRight className="h-4 w-4" />

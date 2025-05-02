@@ -1,8 +1,11 @@
+
 import React, { useState } from 'react';
-import { format, addMonths, subMonths } from 'date-fns';
+import { format, addMonths, subMonths, addWeeks, subWeeks, addDays, subDays } from 'date-fns';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import EventList, { eventCategoryColors, EventCategory } from '@/components/EventList';
 import EventForm from '@/components/EventForm';
 import ContinuousYearView from '@/components/ContinuousYearView';
@@ -10,6 +13,8 @@ import ViewModeSelector from '@/components/schedule/ViewModeSelector';
 import MonthView from '@/components/schedule/MonthView';
 import ScheduleControls from '@/components/schedule/ScheduleControls';
 import ColorThemeEditor from '@/components/schedule/ColorThemeEditor';
+import WeekView from '@/components/schedule/WeekView';
+import DayView from '@/components/schedule/DayView';
 
 const initialEvents = [
   { 
@@ -40,8 +45,9 @@ const Schedule = () => {
   const [events, setEvents] = useState(initialEvents);
   const [showSidebar, setShowSidebar] = useState(true);
   const [showEventForm, setShowEventForm] = useState(false);
-  const [viewMode, setViewMode] = useState<'year' | 'month'>('year');
+  const [viewMode, setViewMode] = useState<'year' | 'month' | 'week' | 'day'>('year');
   const [monthColors, setMonthColors] = useState(Array(12).fill(''));
+  const [doubleUpView, setDoubleUpView] = useState(false);
 
   const getCategoryColor = (category: string): string => {
     const normalizedCategory = category.toLowerCase() as EventCategory;
@@ -53,6 +59,10 @@ const Schedule = () => {
       setCurrentDate(new Date(currentDate.getFullYear() - 1, 0, 1));
     } else if (viewMode === 'month') {
       setCurrentDate(subMonths(currentDate, 1));
+    } else if (viewMode === 'week') {
+      setCurrentDate(subWeeks(currentDate, 1));
+    } else if (viewMode === 'day') {
+      setCurrentDate(subDays(currentDate, 1));
     }
   };
 
@@ -61,6 +71,10 @@ const Schedule = () => {
       setCurrentDate(new Date(currentDate.getFullYear() + 1, 0, 1));
     } else if (viewMode === 'month') {
       setCurrentDate(addMonths(currentDate, 1));
+    } else if (viewMode === 'week') {
+      setCurrentDate(addWeeks(currentDate, 1));
+    } else if (viewMode === 'day') {
+      setCurrentDate(addDays(currentDate, 1));
     }
   };
 
@@ -92,7 +106,17 @@ const Schedule = () => {
           onToggleSidebar={toggleSidebar}
           onAddEvent={() => setShowEventForm(true)}
         />
-        <ColorThemeEditor onColorsChange={(colors) => setMonthColors(colors.map(c => c.color))} />
+        <div className="flex items-center gap-4">
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="double-up-view"
+              checked={doubleUpView}
+              onCheckedChange={setDoubleUpView}
+            />
+            <Label htmlFor="double-up-view">Double-Up View</Label>
+          </div>
+          <ColorThemeEditor onColorsChange={(colors) => setMonthColors(colors.map(c => c.color))} />
+        </div>
       </div>
 
       <div className="glass-morphism p-3 mb-4 rounded flex flex-wrap gap-2">
@@ -110,19 +134,40 @@ const Schedule = () => {
           <div className="flex gap-4 mb-4">
             <ViewModeSelector 
               viewMode={viewMode} 
-              onViewModeChange={(mode) => setViewMode(mode)} 
+              onViewModeChange={(mode) => setViewMode(mode as 'year' | 'month' | 'week' | 'day')} 
             />
           </div>
 
-          {viewMode === 'year' ? (
+          {viewMode === 'year' && (
             <ContinuousYearView
               currentDate={currentDate}
               events={events}
               onEventClick={handleEventClick}
               monthColors={monthColors}
+              doubleUpView={doubleUpView}
             />
-          ) : (
+          )}
+          
+          {viewMode === 'month' && (
             <MonthView
+              currentDate={currentDate}
+              events={events}
+              onEventClick={handleEventClick}
+              getCategoryColor={getCategoryColor}
+            />
+          )}
+          
+          {viewMode === 'week' && (
+            <WeekView 
+              currentDate={currentDate}
+              events={events}
+              onEventClick={handleEventClick}
+              getCategoryColor={getCategoryColor}
+            />
+          )}
+          
+          {viewMode === 'day' && (
+            <DayView
               currentDate={currentDate}
               events={events}
               onEventClick={handleEventClick}
