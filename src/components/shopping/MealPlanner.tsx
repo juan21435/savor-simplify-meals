@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -63,7 +64,7 @@ const MealPlanner = () => {
         <Card className="md:col-span-1">
           
           <CardContent>
-            <Calendar mode="single" selected={selectedDate} onSelect={date => date && setSelectedDate(date)} className="border py-[32px] rounded-none" />
+            <Calendar mode="single" selected={selectedDate} onSelect={date => date && setSelectedDate(date)} className="border py-[42px] mt-4 rounded-none" />
             
             <div className="mt-6">
               <h3 className="font-medium mb-2">Upcoming Meal Plans</h3>
