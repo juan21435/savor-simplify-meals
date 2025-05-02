@@ -49,6 +49,19 @@
   }
 
   .glass-morphism {
-    @apply backdrop-blur-xl bg-white/5 border border-white/10 shadow-[0_4px_12px_-2px_rgba(0,0,0,0.3)];
+    @apply backdrop-blur-xl bg-black/80 border border-white/10 shadow-[0_4px_12px_-2px_rgba(0,0,0,0.3)];
+  }
+  
+  /* Calendar specific styles */
+  .calendar-day {
+    @apply aspect-square p-1 border border-gray-800 text-white hover:bg-gray-900 transition-colors;
+  }
+  
+  .calendar-week-boundary {
+    @apply border-l-2 border-l-gray-500;
+  }
+  
+  .calendar-day-event {
+    @apply h-1 w-full rounded-sm mb-0.5 bg-white/40 hover:bg-white/60 cursor-pointer transition-colors;
   }
 }

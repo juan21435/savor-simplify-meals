@@ -48,9 +48,7 @@ const ContinuousYearView = ({
   });
   
   // Change to more intuitive day ordering with Sunday first
-  const weekDays = doubleUpView 
-    ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-    : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   const allDays = months.reduce((acc, month) => {
     const monthStart = startOfMonth(month);
@@ -67,22 +65,27 @@ const ContinuousYearView = ({
     firstDayIndex: allDays.findIndex(day => isSameMonth(day, month))
   }));
 
-  // Determine the grid columns based on double-up view
-  const gridCols = doubleUpView ? 'grid-cols-14' : 'grid-cols-7';
-
   return (
-    <div className="w-full overflow-auto rounded-lg border border-border/50">
-      <div className="sticky top-0 z-10 bg-white text-gray-900 border-b border-border/50 py-2">
-        <div className={`grid ${gridCols} gap-px`}>
+    <div className="w-full overflow-auto rounded-lg border border-border/50 bg-black">
+      <div className="sticky top-0 z-10 bg-black text-white border-b border-border/50 py-2">
+        <div className={`grid ${doubleUpView ? 'grid-cols-14' : 'grid-cols-7'} gap-px`}>
+          {/* First week header */}
           {weekDays.map((day, idx) => (
-            <div key={`${day}-${idx}`} className="text-center text-sm font-medium text-gray-600 p-1">
+            <div key={`${day}-${idx}-first`} className="text-center text-sm font-medium text-white p-1">
+              {day}
+            </div>
+          ))}
+          
+          {/* Second week header for double-up view */}
+          {doubleUpView && weekDays.map((day, idx) => (
+            <div key={`${day}-${idx}-second`} className="text-center text-sm font-medium text-white p-1">
               {day}
             </div>
           ))}
         </div>
       </div>
 
-      <div className={`relative grid ${gridCols} gap-px bg-white text-gray-900`}>
+      <div className={`relative grid ${doubleUpView ? 'grid-cols-14' : 'grid-cols-7'} gap-px bg-black text-white`}>
         {monthBoundaries.map(({ month, firstDayIndex }, index) => {
           const nextMonthStart = monthBoundaries[index + 1]?.firstDayIndex || allDays.length;
           const daysInMonth = nextMonthStart - firstDayIndex;
@@ -109,35 +112,40 @@ const ContinuousYearView = ({
             isSameMonth(event.date, day) && isSameDay(event.date, day)
           );
           
-          // Determine if this day is at a week boundary (for more visible separation)
-          const isWeekBoundary = index % (doubleUpView ? 14 : 7) === 0;
+          // Calculate the position for the days based on doubleUpView
+          let gridColumn = index % 7 + 1; // Default single week view
+          let gridRow = Math.floor(index / 7) + 1;
           
-          // For double-up view, calculate duplicate position
-          let displayIndex = index;
           if (doubleUpView) {
+            // For double-up view, we need to alternate between the first and second week columns
             const weekIndex = Math.floor(index / 7);
             const dayOfWeek = index % 7;
-            displayIndex = weekIndex * 14 + dayOfWeek;
+            
+            // If it's an even week (0, 2, 4...), place it in the first week columns (1-7)
+            // If it's an odd week (1, 3, 5...), place it in the second week columns (8-14)
+            gridColumn = dayOfWeek + 1 + (weekIndex % 2 === 0 ? 0 : 7);
+            gridRow = Math.floor(weekIndex / 2) + 1;
           }
+          
+          // Determine if this day is at a week boundary (for more visible separation)
+          const isWeekBoundary = index % 7 === 0;
           
           return (
             <div
-              key={`${day.toString()}-${displayIndex}`}
+              key={`${day.toString()}-${index}`}
               className={cn(
-                "relative z-10 aspect-square p-1 border border-gray-100 transition-colors",
-                isWeekBoundary && "border-l-2 border-l-gray-300", // More visible week boundary
+                "relative z-10 aspect-square p-1 border border-gray-800 transition-colors",
+                isWeekBoundary && "border-l-2 border-l-gray-500", // More visible week boundary
+                (doubleUpView && gridColumn === 8) && "border-l-2 border-l-gray-500", // Add visible separation between weeks in double-up
                 isSameDay(day, new Date()) && "ring-1 ring-primary",
-                "group hover:bg-gray-50/80"
+                "group hover:bg-gray-900"
               )}
               style={{
-                gridRow: `auto`,
-                gridColumn: `auto`,
-                ...(doubleUpView && {
-                  gridColumnStart: (displayIndex % 14) + 1
-                })
+                gridColumn,
+                gridRow
               }}
             >
-              <span className="text-xs text-gray-600">
+              <span className="text-xs text-white font-medium">
                 {format(day, 'd')}
               </span>
 
@@ -146,60 +154,12 @@ const ContinuousYearView = ({
                   <div
                     key={event.id}
                     onClick={() => onEventClick(event.id)}
-                    className="h-1 w-full rounded-sm mb-0.5 bg-gray-400/40 hover:bg-gray-400/60 cursor-pointer transition-colors"
+                    className="h-1 w-full rounded-sm mb-0.5 bg-white/40 hover:bg-white/60 cursor-pointer transition-colors"
                     title={event.title}
                   />
                 ))}
                 {dayEvents.length > 2 && (
-                  <div className="text-[10px] text-gray-500">
-                    +{dayEvents.length - 2}
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-        
-        {/* If double-up view is enabled, duplicate the days */}
-        {doubleUpView && allDays.map((day, index) => {
-          const dayEvents = events.filter(event => 
-            isSameMonth(event.date, day) && isSameDay(event.date, day)
-          );
-          
-          // Calculate second column position
-          const weekIndex = Math.floor(index / 7);
-          const dayOfWeek = index % 7;
-          const displayIndex = weekIndex * 14 + dayOfWeek + 7; // +7 for second column
-          
-          return (
-            <div
-              key={`${day.toString()}-duplicate-${displayIndex}`}
-              className={cn(
-                "relative z-10 aspect-square p-1 border border-gray-100 transition-colors",
-                dayOfWeek === 0 && "border-l-2 border-l-gray-300", // More visible week boundary
-                isSameDay(day, new Date()) && "ring-1 ring-primary",
-                "group hover:bg-gray-50/80"
-              )}
-              style={{
-                gridRow: `auto`,
-                gridColumnStart: (displayIndex % 14) + 1
-              }}
-            >
-              <span className="text-xs text-gray-600">
-                {format(day, 'd')}
-              </span>
-
-              <div className="absolute bottom-1 left-1 right-1">
-                {dayEvents.slice(0, 2).map((event) => (
-                  <div
-                    key={`dup-${event.id}`}
-                    onClick={() => onEventClick(event.id)}
-                    className="h-1 w-full rounded-sm mb-0.5 bg-gray-400/40 hover:bg-gray-400/60 cursor-pointer transition-colors"
-                    title={event.title}
-                  />
-                ))}
-                {dayEvents.length > 2 && (
-                  <div className="text-[10px] text-gray-500">
+                  <div className="text-[10px] text-gray-300">
                     +{dayEvents.length - 2}
                   </div>
                 )}

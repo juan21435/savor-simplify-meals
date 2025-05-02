@@ -53,6 +53,7 @@ const ColorThemeEditor = ({ onColorsChange }: ColorThemeEditorProps) => {
   const [tempColors, setTempColors] = useState<MonthColor[]>(defaultMonthColors);
   const [selectedPalette, setSelectedPalette] = useState<string>("Pastel");
   const [shadeIntensity, setShadeIntensity] = useState<number>(50);
+  const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
 
   // Apply shade intensity to colors
@@ -88,15 +89,20 @@ const ColorThemeEditor = ({ onColorsChange }: ColorThemeEditorProps) => {
       });
       
       setTempColors(newColors);
+      
+      // Apply colors in real-time
+      onColorsChange(newColors);
     };
     
     applyShade();
-  }, [shadeIntensity, colors]);
+  }, [shadeIntensity, tempColors, onColorsChange]);
 
   const handleColorChange = (index: number, newColor: string) => {
     const updatedColors = [...tempColors];
     updatedColors[index] = { ...tempColors[index], color: newColor };
     setTempColors(updatedColors);
+    // Apply changes in real-time
+    onColorsChange(updatedColors);
   };
 
   const handleSave = () => {
@@ -110,6 +116,8 @@ const ColorThemeEditor = ({ onColorsChange }: ColorThemeEditorProps) => {
 
   const handleReset = () => {
     setTempColors(colors);
+    // Apply the reset immediately
+    onColorsChange(colors);
     toast({
       title: "Changes reset",
       description: "Your changes have been discarded.",
@@ -129,6 +137,9 @@ const ColorThemeEditor = ({ onColorsChange }: ColorThemeEditorProps) => {
     
     setTempColors(newColors);
     
+    // Apply palette changes in real-time
+    onColorsChange(newColors);
+    
     toast({
       title: "Palette applied",
       description: `Applied ${paletteName} palette to months.`,
@@ -143,6 +154,9 @@ const ColorThemeEditor = ({ onColorsChange }: ColorThemeEditorProps) => {
     
     setTempColors(newColors);
     
+    // Apply random colors in real-time
+    onColorsChange(newColors);
+    
     toast({
       title: "Colors randomized",
       description: "Random colors have been applied.",
@@ -150,22 +164,27 @@ const ColorThemeEditor = ({ onColorsChange }: ColorThemeEditorProps) => {
   };
 
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline" size="icon" className="w-10 h-10">
+        <Button 
+          variant="outline" 
+          size="icon" 
+          className="w-10 h-10 bg-black text-white border-white/30 hover:bg-gray-800"
+          onClick={() => setIsOpen(true)}
+        >
           <Paintbrush className="h-4 w-4" />
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[350px] sm:w-[450px] overflow-y-auto">
+      <SheetContent className="w-[350px] sm:w-[450px] overflow-y-auto bg-black text-white border-white/20">
         <SheetHeader>
-          <SheetTitle>Color Theme Editor</SheetTitle>
-          <SheetDescription>
+          <SheetTitle className="text-white">Color Theme Editor</SheetTitle>
+          <SheetDescription className="text-gray-300">
             Customize the colors for each month in the calendar view.
           </SheetDescription>
         </SheetHeader>
         
         <div className="mt-6">
-          <Label>Palettes:</Label>
+          <Label className="text-white">Palettes:</Label>
           <div className="flex items-center gap-2 mt-2 mb-4 flex-wrap">
             {Object.keys(colorPalettes).map(palette => (
               <Button 
@@ -173,7 +192,7 @@ const ColorThemeEditor = ({ onColorsChange }: ColorThemeEditorProps) => {
                 variant={selectedPalette === palette ? "default" : "outline"}
                 size="sm"
                 onClick={() => applyPalette(palette)}
-                className="flex items-center gap-1"
+                className="flex items-center gap-1 bg-gray-800 hover:bg-gray-700 text-white border-white/20"
               >
                 <Palette className="w-3 h-3" />
                 {palette}
@@ -183,7 +202,7 @@ const ColorThemeEditor = ({ onColorsChange }: ColorThemeEditorProps) => {
               variant="outline"
               size="sm"
               onClick={randomizeColors}
-              className="flex items-center gap-1 ml-auto"
+              className="flex items-center gap-1 ml-auto bg-gray-800 hover:bg-gray-700 text-white border-white/20"
             >
               <Shuffle className="w-3 h-3" />
               Randomize
@@ -193,8 +212,8 @@ const ColorThemeEditor = ({ onColorsChange }: ColorThemeEditorProps) => {
         
         <div className="mt-6">
           <div className="flex justify-between items-center">
-            <Label>Shade:</Label>
-            <span className="text-sm text-muted-foreground">
+            <Label className="text-white">Shade:</Label>
+            <span className="text-sm text-gray-300">
               {shadeIntensity < 50 ? 'Darker' : shadeIntensity > 50 ? 'Lighter' : 'Normal'}
             </span>
           </div>
@@ -211,7 +230,7 @@ const ColorThemeEditor = ({ onColorsChange }: ColorThemeEditorProps) => {
         <div className="grid gap-4 py-4 mt-4">
           {tempColors.map((month, index) => (
             <div key={month.name} className="flex items-center gap-4">
-              <Label htmlFor={`color-${index}`} className="w-24">
+              <Label htmlFor={`color-${index}`} className="w-24 text-white">
                 {month.name}
               </Label>
               <Input
@@ -229,10 +248,17 @@ const ColorThemeEditor = ({ onColorsChange }: ColorThemeEditorProps) => {
           ))}
         </div>
         <div className="flex justify-between mt-6">
-          <Button variant="outline" onClick={handleReset}>
+          <Button 
+            variant="outline" 
+            onClick={handleReset}
+            className="bg-gray-800 hover:bg-gray-700 text-white border-white/20"
+          >
             Reset Changes
           </Button>
-          <Button onClick={handleSave} className="flex items-center gap-2">
+          <Button 
+            onClick={handleSave} 
+            className="flex items-center gap-2 bg-primary hover:bg-primary/80 text-black"
+          >
             <Save className="h-4 w-4" />
             Save Changes
           </Button>
