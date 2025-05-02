@@ -7,6 +7,7 @@ import Navigation from "@/components/Navigation";
 import Schedule from "@/pages/Schedule";
 import Finance from "@/pages/Finance";
 import ShoppingDashboard from "@/pages/ShoppingDashboard";
+import Journal from "@/pages/Journal";
 
 const queryClient = new QueryClient();
 
@@ -33,7 +34,7 @@ const App = () => (
             <Route path="/health" element={<PlaceholderPage title="Health" />} />
             <Route path="/analytics" element={<PlaceholderPage title="Analytics" />} />
             <Route path="/shopping" element={<ShoppingDashboard />} />
-            <Route path="/journal" element={<PlaceholderPage title="Journal" />} />
+            <Route path="/journal" element={<Journal />} />
           </Routes>
         </main>
       </div>

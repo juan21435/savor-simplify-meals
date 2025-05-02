@@ -44,7 +44,7 @@ const navigationItems = [
     icon: Book,
     label: 'Journal',
     path: '/journal',
-    description: 'Personal notes and reflections'
+    description: 'Audio & digital scrapbooking'
   }
 ];
 
