@@ -17,6 +17,7 @@ interface ContinuousYearViewProps {
   onEventClick: (eventId: string) => void;
   monthColors?: string[];
   doubleUpView?: boolean;
+  layoutMode?: 'continuous' | 'aligned' | 'monthly';
 }
 
 const defaultMonthColors = {
@@ -39,7 +40,8 @@ const ContinuousYearView = ({
   events,
   onEventClick,
   monthColors = [],
-  doubleUpView = false
+  doubleUpView = false,
+  layoutMode = 'continuous'
 }: ContinuousYearViewProps) => {
   const year = currentDate.getFullYear();
   const months = eachMonthOfInterval({
@@ -50,6 +52,7 @@ const ContinuousYearView = ({
   // Change to more intuitive day ordering with Sunday first
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+  // Generate all days in the year
   const allDays = months.reduce((acc, month) => {
     const monthStart = startOfMonth(month);
     const monthEnd = endOfMonth(month);
@@ -60,10 +63,36 @@ const ContinuousYearView = ({
     return [...acc, ...days];
   }, [] as Date[]);
 
+  // Track month boundaries for coloring
   const monthBoundaries = months.map(month => ({
     month,
     firstDayIndex: allDays.findIndex(day => isSameMonth(day, month))
   }));
+
+  // Adjust layout based on layoutMode
+  let adjustedDays = [...allDays];
+  
+  if (layoutMode === 'aligned') {
+    // For aligned mode, we need to adjust days to align by weekday
+    adjustedDays = months.flatMap((month, monthIndex) => {
+      const monthDays = eachDayOfInterval({
+        start: startOfMonth(month),
+        end: endOfMonth(month)
+      });
+      
+      // Add padding days for alignment (empty days to align the 1st of each month)
+      const firstDayOfMonth = monthDays[0];
+      const dayOfWeek = firstDayOfMonth.getDay();
+      const paddingDays = Array(dayOfWeek).fill(null);
+      
+      return [...paddingDays, ...monthDays];
+    });
+  } else if (layoutMode === 'monthly') {
+    // For monthly mode, we'd separate by month completely
+    // This would be a more complex implementation with month headers
+    // For now, we'll use the same layout as 'continuous'
+    adjustedDays = [...allDays];
+  }
 
   return (
     <div className="w-full overflow-auto rounded-lg border border-border/50 bg-black">

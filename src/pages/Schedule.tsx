@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import EventList, { eventCategoryColors, EventCategory } from '@/components/EventList';
 import EventForm from '@/components/EventForm';
 import ContinuousYearView from '@/components/ContinuousYearView';
@@ -15,6 +16,7 @@ import ScheduleControls from '@/components/schedule/ScheduleControls';
 import ColorThemeEditor from '@/components/schedule/ColorThemeEditor';
 import WeekView from '@/components/schedule/WeekView';
 import DayView from '@/components/schedule/DayView';
+import { Calendar, LayoutGrid, AlignJustify, Columns } from 'lucide-react';
 
 const initialEvents = [
   { 
@@ -48,6 +50,7 @@ const Schedule = () => {
   const [viewMode, setViewMode] = useState<'year' | 'month' | 'week' | 'day'>('year');
   const [monthColors, setMonthColors] = useState(Array(12).fill(''));
   const [doubleUpView, setDoubleUpView] = useState(false);
+  const [layoutMode, setLayoutMode] = useState<'continuous' | 'aligned' | 'monthly'>('continuous');
 
   const getCategoryColor = (category: string): string => {
     const normalizedCategory = category.toLowerCase() as EventCategory;
@@ -107,14 +110,40 @@ const Schedule = () => {
           onAddEvent={() => setShowEventForm(true)}
         />
         <div className="flex items-center gap-4">
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="double-up-view"
-              checked={doubleUpView}
-              onCheckedChange={setDoubleUpView}
-            />
-            <Label htmlFor="double-up-view">Double-Up View</Label>
-          </div>
+          {viewMode === 'year' && (
+            <>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="double-up-view"
+                  checked={doubleUpView}
+                  onCheckedChange={setDoubleUpView}
+                />
+                <Label htmlFor="double-up-view">Double-Up View</Label>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Label className="mr-2">Layout:</Label>
+                <ToggleGroup 
+                  type="single" 
+                  value={layoutMode}
+                  onValueChange={(value) => {
+                    if (value) setLayoutMode(value as 'continuous' | 'aligned' | 'monthly');
+                  }}
+                  className="bg-black/90 border border-white/20 rounded-md backdrop-blur-sm shadow-md"
+                >
+                  <ToggleGroupItem value="continuous" aria-label="Continuous view" className="data-[state=on]:bg-gray-700 text-white hover:bg-gray-800">
+                    <AlignJustify className="h-4 w-4" />
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="aligned" aria-label="Aligned view" className="data-[state=on]:bg-gray-700 text-white hover:bg-gray-800">
+                    <LayoutGrid className="h-4 w-4" />
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="monthly" aria-label="Monthly view" className="data-[state=on]:bg-gray-700 text-white hover:bg-gray-800">
+                    <Columns className="h-4 w-4" />
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
+            </>
+          )}
           <ColorThemeEditor onColorsChange={(colors) => setMonthColors(colors.map(c => c.color))} />
         </div>
       </div>
@@ -145,6 +174,7 @@ const Schedule = () => {
               onEventClick={handleEventClick}
               monthColors={monthColors}
               doubleUpView={doubleUpView}
+              layoutMode={layoutMode}
             />
           )}
           

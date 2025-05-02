@@ -14,7 +14,6 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Slider } from '@/components/ui/slider';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 interface MonthColor {
   name: string;
@@ -55,6 +54,11 @@ const ColorThemeEditor = ({ onColorsChange }: ColorThemeEditorProps) => {
   const [shadeIntensity, setShadeIntensity] = useState<number>(50);
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
+
+  // Initialize with default colors
+  useEffect(() => {
+    onColorsChange(colors);
+  }, []);
 
   // Apply shade intensity to colors
   useEffect(() => {
