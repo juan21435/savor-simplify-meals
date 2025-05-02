@@ -64,4 +64,33 @@
   .calendar-day-event {
     @apply h-1 w-full rounded-sm mb-0.5 bg-white/40 hover:bg-white/60 cursor-pointer transition-colors;
   }
+  
+  /* Journal styles */
+  .journal-page {
+    background-image: 
+      linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+    border-radius: 8px;
+    @apply p-4;
+  }
+  
+  .scrapbook-item {
+    @apply transition-all duration-200 hover:-rotate-1 cursor-grab active:cursor-grabbing;
+  }
+  
+  .notebook-card {
+    @apply bg-white border border-gray-200 rounded-md shadow-sm hover:shadow-md transition-shadow;
+    position: relative;
+  }
+  
+  .notebook-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 8px;
+    right: 8px;
+    height: 1px;
+    background: repeating-linear-gradient(90deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 6px, transparent 6px, transparent 12px);
+  }
 }
