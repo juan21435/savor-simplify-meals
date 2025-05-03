@@ -10,7 +10,7 @@ const Health = () => {
   const isMobile = useIsMobile();
 
   return (
-    <div className="container-custom py-6 md:py-8">
+    <div className="container-custom py-6 md:py-8 animate-fade-in">
       <div className="flex items-center justify-between mb-6 md:mb-8">
         <div className="flex items-center gap-2 md:gap-4">
           <Link to="/">

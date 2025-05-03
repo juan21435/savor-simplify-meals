@@ -31,6 +31,7 @@
 
   * {
     @apply border-border selection:bg-white/10 selection:text-white;
+    scroll-behavior: smooth;
   }
 
   body {
@@ -49,7 +50,16 @@
   }
 
   .glass-morphism {
-    @apply backdrop-blur-xl bg-black/80 border border-white/10 shadow-[0_4px_12px_-2px_rgba(0,0,0,0.3)];
+    @apply backdrop-blur-xl bg-black/80 border border-white/10 shadow-[0_4px_12px_-2px_rgba(0,0,0,0.3)] rounded-xl transition-all;
+  }
+  
+  /* Card styling */
+  .card-hover {
+    @apply transition-all duration-300 hover:scale-[1.02] hover:shadow-lg;
+  }
+  
+  .card-stats {
+    @apply glass-morphism p-4 md:p-6 h-full;
   }
   
   /* Calendar specific styles */
@@ -92,5 +102,30 @@
     right: 8px;
     height: 1px;
     background: repeating-linear-gradient(90deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 6px, transparent 6px, transparent 12px);
+  }
+  
+  /* Responsive text helpers */
+  .text-responsive {
+    @apply text-sm sm:text-base md:text-lg;
+  }
+  
+  .heading-responsive {
+    @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+  }
+  
+  /* Animation classes */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }

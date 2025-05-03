@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Dumbbell, Wallet, Activity, ChartBar, ShoppingCart, Book } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const navigationItems = [
   {
@@ -49,15 +50,17 @@ const navigationItems = [
 ];
 
 const Navigation = () => {
+  const isMobile = useIsMobile();
+  
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 max-w-4xl mx-auto animate-fade-in">
       {navigationItems.map((item) => (
         <Link key={item.path} to={item.path} className="group">
-          <div className="glass-morphism aspect-square p-6 flex flex-col items-center justify-center gap-4 transition-all duration-200 hover:scale-105">
-            <item.icon className="w-12 h-12 text-primary transition-colors group-hover:text-accent" />
+          <div className="glass-morphism aspect-square p-4 md:p-6 flex flex-col items-center justify-center gap-3 md:gap-4 transition-all duration-300 hover:scale-[1.03] hover:shadow-lg">
+            <item.icon className={`${isMobile ? 'w-8 h-8' : 'w-12 h-12'} text-primary transition-colors group-hover:text-accent`} />
             <div className="text-center">
-              <h3 className="font-display font-medium text-lg">{item.label}</h3>
-              <p className="text-sm text-muted-foreground">{item.description}</p>
+              <h3 className="font-display font-medium text-base md:text-lg">{item.label}</h3>
+              <p className={`text-xs md:text-sm text-muted-foreground ${isMobile ? 'line-clamp-2' : ''}`}>{item.description}</p>
             </div>
           </div>
         </Link>
